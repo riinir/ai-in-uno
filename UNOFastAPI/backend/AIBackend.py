@@ -98,7 +98,7 @@ def load_ai_agent():
     try:
         # TODO: #AIINGAMES change based on directory
         # r"C:\Users\abhar\extras\UNI\AI-IN-GAMES\AIinGames\UNOFastAPI\backend\model.pth"
-        file_path = "C:\\UniCalgary\\AI-In-Games\\UNO-Game\\AIinGames\\UNOFastAPI\\backend\\model.pth"
+        file_path = "/Users/ryannguyen/UnityProjects/ai-in-uno/UNOFastAPI/backend/model.pth"
         # Check if the file exists
         if os.path.exists(file_path):
             print("The file exists.")

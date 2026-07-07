@@ -1,7 +1,7 @@
 import sys
 import os
 # TODO: #AIINGAMES change based on directory
-sys.path.append(os.path.abspath("C:\\UniCalgary\\AI-In-Games\\UNO-Game\\AIinGames\\UNOFastAPI"))
+sys.path.append(os.path.abspath("/Users/ryannguyen/UnityProjects/ai-in-uno/UNOFastAPI"))
 
 from fastapi import FastAPI
 # from pydantic import BaseModel
