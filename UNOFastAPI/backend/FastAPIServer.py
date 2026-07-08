@@ -1,10 +1,12 @@
 import sys
-import os
-# TODO: #AIINGAMES change based on directory
-sys.path.append(os.path.abspath("/Users/ryannguyen/UnityProjects/ai-in-uno/UNOFastAPI"))
+from pathlib import Path
+
+# Adjust project path to /UNOFastAPI
+# REMOVE .parent IF THIS FILE IS MOVED UP A DIRECTORY
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+sys.path.append(str(PROJECT_ROOT))
 
 from fastapi import FastAPI
-# from pydantic import BaseModel
 from AIBackend import *
 
 # Initialize FastAPI app
@@ -12,12 +14,10 @@ app = FastAPI()
 
 @app.get("/start_game")
 def start_game():
-    # return
     initialize_game()
-# Load AI agent and set up agents in the environment
+    # Load AI agent and set up agents in the environment
     ai_agent = load_ai_agent()
     set_agents(ai_agent)
-
 
 @app.get("/draw_card")
 def draw_card():
