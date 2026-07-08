@@ -1,6 +1,7 @@
 import torch
 from rlcard.agents.human_agents.uno_human_agent import HumanAgent
 import os
+from pathlib import Path
 
 from rlcard.agents import DQNAgent
 from rlcard.utils import get_device
@@ -96,16 +97,17 @@ def is_draw_card_at_first(card):
 # Load the AI agent
 def load_ai_agent():
     try:
-        # TODO: #AIINGAMES change based on directory
-        # r"C:\Users\abhar\extras\UNI\AI-IN-GAMES\AIinGames\UNOFastAPI\backend\model.pth"
-        file_path = "/Users/ryannguyen/UnityProjects/ai-in-uno/UNOFastAPI/backend/model.pth"
+        # Get the absolute path to /model.pth
+        model_path = Path(__file__).resolve().parent / "model.pth"
+
         # Check if the file exists
-        if os.path.exists(file_path):
+        if os.path.exists(model_path):
             print("The file exists.")
         else:
             print("The file does not exist.")
 
-        dqn_agent = load_model(file_path, env, device=get_device())
+        # Load the model
+        dqn_agent = load_model(model_path, env, device=get_device())
         print("AI agent loaded successfully.")
         return dqn_agent
     except Exception as e:
