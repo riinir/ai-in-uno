@@ -6,15 +6,36 @@ from pathlib import Path
 from rlcard.agents import DQNAgent
 from rlcard.utils import get_device
 import rlcard as rlcard
+from rlcard import models as rlcard_models
 import numpy
 
+# Create rlcard UNO environment
 env = rlcard.make('uno')
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-# from backend.NewAIModule import suggest_move
-
 global player_id, stt, trajectories, human_agent, ai_played_draw
 
+
+def load_ai_agent(agent_type="dqn"):
+    try:
+        agent = None
+        if agent_type == "dqn":
+            # Get the absolute path to /model.pth
+            model_path = Path(__file__).resolve().parent / "model.pth"
+            # Check if the file exists
+            # if os.path.exists(model_path):
+            #    print("The file exists.")
+            # else:
+            #    print("The file does not exist.")
+            agent = load_model(model_path, env, device=get_device())
+        elif agent_type == "rlcard_rule":
+            agent = rlcard_models.load("uno-rule-v1").agents[0]
+
+        print("AI agent loaded successfully.")
+        return agent
+    except Exception as e:
+        print(f"Error loading AI agent: {e}")
+        return None
 
 def load_model(model_path, env=None, position=None, device=None):
     print("hi")
@@ -39,6 +60,12 @@ def load_model(model_path, env=None, position=None, device=None):
 
     return agent
 
+def set_agents(ai_agent):
+    try:
+        env.set_agents([human_agent, ai_agent])
+        print("Agents set in the environment successfully.")
+    except Exception as e:
+        print(f"Error setting agents in the environment: {e}")
 
 
 def initialize_game():
@@ -80,93 +107,39 @@ def initialize_game():
     trajectories = [[] for _ in range(env.num_players)]
     ai_played_draw = False
 
-
     # print(get_game_state(0))
-
-
-def draw_card_backend():
-    return env.returDrawnCardsFromEnv()
-
-
-def is_draw_card_at_first(card):
-    return "draw" in card
-
-
-
-
-# Load the AI agent
-def load_ai_agent():
-    try:
-        # Get the absolute path to /model.pth
-        model_path = Path(__file__).resolve().parent / "model.pth"
-
-        # Check if the file exists
-        if os.path.exists(model_path):
-            print("The file exists.")
-        else:
-            print("The file does not exist.")
-
-        # Load the model
-        dqn_agent = load_model(model_path, env, device=get_device())
-        print("AI agent loaded successfully.")
-        return dqn_agent
-    except Exception as e:
-        print(f"Error loading AI agent: {e}")
-        return None
-
-
-# Set the agents in the environment
-def set_agents(ai_agent):
-    try:
-        env.set_agents([human_agent, ai_agent])
-        print("Agents set in the environment successfully.")
-    except Exception as e:
-        print(f"Error setting agents in the environment: {e}")
-
-
-# Get the current game state for player 0
-def get_game_state(player_id=0):
-    global ai_played_draw
-    state_info = env.get_state(player_id)  # Get the state for player 0
-    raw_state = state_info['raw_obs']
-
-    game_state = {
-        'hand': raw_state.get('hand', []),  # Player's hand
-        'target': raw_state.get('target', None),  # Target card on the pile
-        'played_cards': raw_state.get('played_cards', []),  # Cards played
-        'legal_actions': raw_state.get('legal_actions', []),  # Legal actions available
-        'num_cards': raw_state.get('num_cards', []),  # Number of cards per player
-        'num_players': raw_state.get('num_players', 2),  # Number of players
-        'current_player': raw_state.get('current_player', 0),  # Current player
-        'ai_played_draw': ai_played_draw
-    }
-    return game_state
-
 
 def run(action):
     # player_id = state['current_player']
     global trajectories, player_id, trajectories, ai_played_draw
     # if "draw" in action:
 
-
-
     state = get_game_state(player_id)
 
     trajectories[player_id].append(state)
 
     if not env.is_over():
+        # Human player's action
         if player_id == 0:
-
             next_state, next_player_id = env.step(action, True)
+        # AI player's action
         else:
-            # next_state, next_player_id = env.step(action, env.agents[player_id].use_raw)
             ai_action = env.agents[1].step(env.get_state(1))  # Get AI's action (AI is player 1)
-            ai_action_string = env.decode_action_api(ai_action)
+
+            # DQN agent uses encoded actions rather than raw action strings, so we need to check to adjust accordingly
+            if env.agents[1].use_raw:
+                ai_action_string = ai_action
+            else:
+                # Decode the DQN agent's action
+                ai_action_string = env.decode_action_api(ai_action)
+
             if ai_action_string == 'draw':
                 ai_played_draw = True
             else:
                 ai_played_draw = False
-            next_state, next_player_id = env.step(ai_action)  # Apply the AI's action to the environment
+
+            # Apply the AI's action to the environment
+            next_state, next_player_id = env.step(ai_action, env.agents[1].use_raw)
             # state = get_game_state()  # Get the new game state
 
         trajectories[player_id].append(action)
@@ -187,6 +160,7 @@ def run(action):
         state = get_game_state(player_id)
         return state
 
+    return None
 
 def suggestion():
     ai_suggestion = env.agents[1].step(env.get_state(0))
@@ -194,3 +168,28 @@ def suggestion():
 
     suggested_action = env.decode_action_api(ai_suggestion)
     return suggested_action
+
+def draw_card_backend():
+    return env.returDrawnCardsFromEnv()
+
+def is_draw_card_at_first(card):
+    return "draw" in card
+
+
+# Get the current game state for player 0 (Human player)
+def get_game_state(player_id=0):
+    global ai_played_draw
+    state_info = env.get_state(player_id)  # Get the state for player 0
+    raw_state = state_info['raw_obs']
+
+    game_state = {
+        'hand': raw_state.get('hand', []),  # Player's hand
+        'target': raw_state.get('target', None),  # Target card on the pile
+        'played_cards': raw_state.get('played_cards', []),  # Cards played
+        'legal_actions': raw_state.get('legal_actions', []),  # Legal actions available
+        'num_cards': raw_state.get('num_cards', []),  # Number of cards per player
+        'num_players': raw_state.get('num_players', 2),  # Number of players
+        'current_player': raw_state.get('current_player', 0),  # Current player
+        'ai_played_draw': ai_played_draw
+    }
+    return game_state
