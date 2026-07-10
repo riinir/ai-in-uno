@@ -22,8 +22,8 @@ from rlcard.models.model import Model
 
 from rlcard.games.gin_rummy.utils.action_event import *
 
-import rlcard as rlcard.games.gin_rummy.utils.melding as melding
-import rlcard as rlcard.games.gin_rummy.utils.utils as utils
+import rlcard.games.gin_rummy.utils.melding as melding
+import rlcard.games.gin_rummy.utils.utils as utils
 
 
 class GinRummyNoviceRuleAgent(object):
