@@ -20,7 +20,7 @@ def load_ai_agent(agent_type="dqn"):
     try:
         if agent_type == "dqn":
             # Get the absolute path to /model.pth
-            model_path = Path(__file__).resolve().parent / "model.pth"
+            model_path = Path(__file__).resolve().parent / "agents" / "model.pth"
             # Check if the file exists
             # if os.path.exists(model_path):
             #    print("The file exists.")
@@ -30,13 +30,13 @@ def load_ai_agent(agent_type="dqn"):
         elif agent_type == "rlcard_rule":
             agent = rlcard_models.load("uno-rule-v1").agents[0]
 
-        print("AI agent loaded successfully.")
+        print(f"{agent_type} agent loaded successfully.")
         return agent
     except Exception as e:
-        print(f"Error loading AI agent: {e}")
+        print(f"Error loading {agent_type} agent: {e}")
         return None
 
-def load_model(model_path, env=None, position=None, device=None):
+def load_model(model_path, device=None):
     print("hi")
     if os.path.isfile(model_path):
         print("Loading model from {}".format(model_path))
@@ -163,10 +163,13 @@ def run(action):
 
 def suggestion():
     ai_suggestion = env.agents[1].step(env.get_state(0))
-    # UnoEnv.decode_action_api(ai_suggestion)
 
-    suggested_action = env.decode_action_api(ai_suggestion)
-    return suggested_action
+    # Some agents use the raw action string (e.g., "r-7"), so we can return that immediately
+    if env.agents[1].use_raw:
+        return ai_suggestion
+
+    # Else decode it first from integer to action string then return
+    return env.decode_action_api(ai_suggestion)
 
 def draw_card_backend():
     return env.returDrawnCardsFromEnv()
