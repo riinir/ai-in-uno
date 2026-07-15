@@ -20,7 +20,7 @@ def load_ai_agent(agent_type="dqn"):
     try:
         if agent_type == "dqn":
             # Get the absolute path to /model.pth
-            model_path = Path(__file__).resolve().parent / "agents" / "model.pth"
+            model_path = Path(__file__).resolve().parent / "uno_agents" / "model.pth"
             # Check if the file exists
             # if os.path.exists(model_path):
             #    print("The file exists.")
