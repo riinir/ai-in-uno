@@ -102,7 +102,7 @@ def train(args):
     plot_curve(csv_path, fig_path, args.algorithm)
 
     # Save model
-    save_path = os.path.join(args.log_dir, 'model.pth')
+    save_path = os.path.join(args.log_dir, 'model_1.pth')
     torch.save(agent, save_path)
     print('Model saved in', save_path)
 
@@ -111,7 +111,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--env',
         type=str,
-        default='leduc-holdem',
+        default='uno',
         choices=[
             'blackjack',
             'leduc-holdem',
@@ -161,7 +161,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--log_dir',
         type=str,
-        default='experiments/leduc_holdem_dqn_result/',
+        default='experiments/uno_dqn_result/',
     )
     
     parser.add_argument(
