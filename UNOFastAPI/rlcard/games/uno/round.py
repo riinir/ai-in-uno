@@ -114,7 +114,7 @@ class UnoRound:
                 elif card.color == target.color:
                     legal_actions.append(card.str)
 
-        # target is aciton card or number card
+        # target is action card or number card
         else:
             for card in hand:
                 if card.type == 'wild':
@@ -189,7 +189,7 @@ class UnoRound:
         #         self.played_cards.append(card)
         #         self._preform_non_number_action(players, card)
 
-        # draw a card with the diffrent color of target
+        # draw a card with the different color of target
         # else:
         players[self.current_player].hand.append(card)
         self.current_player = (self.current_player + self.direction) % self.num_players
@@ -206,7 +206,7 @@ class UnoRound:
             return
             print(f"self.direction = {self.direction}")
 
-        # perfrom skip card
+        # perform skip card
         elif card.trait == 'skip':
             current = (current + direction) % num_players
 
@@ -220,7 +220,7 @@ class UnoRound:
             self.dealer.deal_cards(players[(current + direction) % num_players], 2)
             current = (current + direction) % num_players
 
-        # perfrom wild_draw_4 card
+        # perform wild_draw_4 card
         elif card.trait == 'wild_draw_4':
             if len(self.dealer.deck) < 4:
                 self.replace_deck()
@@ -229,6 +229,6 @@ class UnoRound:
                 #return None
             self.dealer.deal_cards(players[(current + direction) % num_players], 4)
             current = (current + direction) % num_players
-        print(f"fuck {current}, {num_players}, {self.direction}")
+        print(f"fudge {current}, {num_players}, {self.direction}")
         self.current_player = (current + self.direction) % num_players
         self.target = card
