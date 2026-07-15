@@ -18,7 +18,6 @@ global player_id, stt, trajectories, human_agent, ai_played_draw
 
 def load_ai_agent(agent_type="dqn"):
     try:
-        agent = None
         if agent_type == "dqn":
             # Get the absolute path to /model.pth
             model_path = Path(__file__).resolve().parent / "model.pth"
