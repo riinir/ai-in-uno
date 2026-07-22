@@ -3,10 +3,11 @@ from rlcard.agents.human_agents.uno_human_agent import HumanAgent
 import os
 from pathlib import Path
 
+import rlcard as rlcard
 from rlcard.agents import DQNAgent
 from rlcard.utils import get_device
-import rlcard as rlcard
 from rlcard import models as rlcard_models
+from uno_agents.random_agent import RandomAgent
 import numpy
 
 # Create rlcard UNO environment
@@ -15,6 +16,14 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 global player_id, stt, trajectories, human_agent, ai_played_draw
 
+AGENT_REGISTRY = {
+    "random": RandomAgent
+}
+"""
+    "aggressive": AggressiveAgent,
+    "conservative": ConservativeAgent,
+    "balanced": BalancedAgent,
+"""
 
 def load_ai_agent(agent_type="dqn"):
     try:
@@ -29,6 +38,9 @@ def load_ai_agent(agent_type="dqn"):
             agent = load_model(model_path, env, device=get_device())
         elif agent_type == "rlcard_rule":
             agent = rlcard_models.load("uno-rule-v1").agents[0]
+        # Custom (non-rlcard) agent types
+        elif agent_type in AGENT_REGISTRY:
+            agent = AGENT_REGISTRY[agent_type]()
 
         print(f"{agent_type} agent loaded successfully.")
         return agent
