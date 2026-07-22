@@ -7,7 +7,7 @@ import rlcard as rlcard
 from rlcard.agents import DQNAgent
 from rlcard.utils import get_device
 from rlcard import models as rlcard_models
-from uno_agents.random_agent import RandomAgent
+from uno_agents import *
 import numpy
 
 # Create rlcard UNO environment
@@ -17,13 +17,11 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 global player_id, stt, trajectories, human_agent, ai_played_draw
 
 AGENT_REGISTRY = {
-    "random": RandomAgent
-}
-"""
+    "random": RandomAgent,
     "aggressive": AggressiveAgent,
     "conservative": ConservativeAgent,
     "balanced": BalancedAgent,
-"""
+}
 
 def load_ai_agent(agent_type="dqn"):
     try:

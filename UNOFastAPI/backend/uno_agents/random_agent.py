@@ -1,5 +1,10 @@
+"""
+This agent selects a random legal move every turn
+"""
+
 from backend.uno_agents.base_agent import BaseUNOAgent
 import numpy as np
+
 
 class RandomAgent(BaseUNOAgent):
 
