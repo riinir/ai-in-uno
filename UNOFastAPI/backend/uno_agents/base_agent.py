@@ -19,14 +19,13 @@ class BaseUNOAgent(ABC):
         - eval_step(state)
     """
 
-    # rlcard should provide raw states and expect raw action strings (e.g., "r-7", not an integer alone)
-    use_raw = True
-
     def __init__(self, name="Base Agent"):
         """
         Names: "Random Agent", "Aggressive Agent", "Conservative Agent", "Balanced Agent"
         """
         self.name = name
+        # rlcard should provide raw states and expect raw action strings (e.g., "r-7", not an integer alone)
+        self.use_raw = True
 
     @abstractmethod
     def step(self, state):
@@ -94,13 +93,13 @@ class BaseUNOAgent(ABC):
         # Return a list of all the non-wild cards. Return original list if all are wild
         filtered = [
             card for card in cards
-            if "wild" not in card.get_str()
+            if "wild" not in card
         ]
 
         return filtered if filtered else cards
 
     @staticmethod
-    def count_colors(cards):
+    def count_colours(cards):
         """
         Count how many cards of each colour exist
 
@@ -122,9 +121,9 @@ class BaseUNOAgent(ABC):
         return dict(counter)
 
     @staticmethod
-    def most_common_color(cards):
+    def most_common_colour(cards):
         # Return colour (str) that appears most often
-        counts = BaseUNOAgent.count_colors(BaseUNOAgent.filter_wild(cards))
+        counts = BaseUNOAgent.count_colours(BaseUNOAgent.filter_wild(cards))
 
         if not counts:
             return "r"
@@ -132,9 +131,9 @@ class BaseUNOAgent(ABC):
         return max(counts)
 
     @staticmethod
-    def least_common_color(cards):
+    def least_common_colour(cards):
         # Return colour that appears least often
-        counts = BaseUNOAgent.count_colors(BaseUNOAgent.filter_wild(cards))
+        counts = BaseUNOAgent.count_colours(BaseUNOAgent.filter_wild(cards))
 
         if not counts:
             return "r"
@@ -169,6 +168,14 @@ class BaseUNOAgent(ABC):
             return "number"
 
         return value
+
+    @staticmethod
+    def colour_of_card(card):
+        # Return the colour of the card (e.g., r-wild -> "r")
+        if card == "draw":
+            return None
+
+        return card.split("-")[0]
 
     def __repr__(self):
         # String representation of the agent object
