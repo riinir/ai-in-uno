@@ -35,7 +35,7 @@ class AggressiveAgent(BaseUNOAgent):
 
         # Loop over legal actions, choose the card with the highest priority and the least colour
         for action in legal_actions:
-            priority = self.card_priority.get(self.action_type(action))
+            priority = self.card_priority.get(self.action_type(action), 0)
 
             if priority > best_priority:
                 best_priority = priority
@@ -43,5 +43,15 @@ class AggressiveAgent(BaseUNOAgent):
 
             elif priority == best_priority and self.colour_of_card(action) == least_colour:
                 best_action = action
+
+        # When action is a wild card, prefer selecting the most common colour
+        if best_action is not None:
+            best_colour = self.most_common_colour(hand)
+
+            if best_action.endswith("wild"):
+                best_action = f"{best_colour}-wild"
+
+            if best_action.endswith("wild_draw_4"):
+                best_action = f"{best_colour}-wild_draw_4"
 
         return best_action
