@@ -198,14 +198,14 @@ def remove_illegal(action_probs, legal_actions):
     return probs
 
 def tournament(env, num):
-    ''' Evaluate he performance of the agents in the environment
+    ''' Evaluate the performance of the agents in the environment
 
     Args:
         env (Env class): The environment to be evaluated.
         num (int): The number of games to play.
 
     Returns:
-        A list of avrage payoffs for each player
+        A list of average payoffs for each player
     '''
     payoffs = [0 for _ in range(env.num_players)]
     counter = 0

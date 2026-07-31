@@ -63,20 +63,19 @@ def train(args):
             )
     agents = [agent]
     for _ in range(1, env.num_players):
-        agents.append(RandomAgent(num_actions=env.num_actions))
+        agents.append(RandomAgent(num_actions=env.num_actions)) # <- SET AGENT HERE
     env.set_agents(agents)
 
     # Start training
     with Logger(args.log_dir) as logger:
         for episode in range(args.num_episodes):
-
             if args.algorithm == 'nfsp':
                 agents[0].sample_episode_policy()
 
             # Generate data from the environment
             trajectories, payoffs = env.run(is_training=True)
 
-            # Reorganaize the data to be state, action, reward, next_state, done
+            # Reorganize the data to be state, action, reward, next_state, done
             trajectories = reorganize(trajectories, payoffs)
 
             # Feed transitions into agent memory, and train the agent
@@ -99,7 +98,7 @@ def train(args):
         csv_path, fig_path = logger.csv_path, logger.fig_path
 
     # Plot the learning curve
-    plot_curve(csv_path, fig_path, args.algorithm)
+    #plot_curve(csv_path, fig_path, args.algorithm)
 
     # Save model
     save_path = os.path.join(args.log_dir, 'model_1.pth')
@@ -146,12 +145,12 @@ if __name__ == '__main__':
     parser.add_argument(
         '--num_episodes',
         type=int,
-        default=5000,
+        default=1,
     )
     parser.add_argument(
         '--num_eval_games',
         type=int,
-        default=2000,
+        default=1,
     )
     parser.add_argument(
         '--evaluate_every',
