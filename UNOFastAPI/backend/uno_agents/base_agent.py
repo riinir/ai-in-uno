@@ -8,7 +8,6 @@ The interface includes many helper and utility functions for child classes
 """
 
 from abc import ABC, abstractmethod
-from collections import Counter
 
 
 class BaseUNOAgent(ABC):
@@ -112,13 +111,14 @@ class BaseUNOAgent(ABC):
                 'y': 5
             }
         """
-        counter = Counter()
-
+        colour_nums = {}
         for card in cards:
-            if len(card) > 0:
-                counter[card] += 1
+            colour = card[0]
+            if colour not in colour_nums:
+                colour_nums[colour] = 0
+            colour_nums[colour] += 1
 
-        return dict(counter)
+        return colour_nums
 
     @staticmethod
     def most_common_colour(cards):
