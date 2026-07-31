@@ -7,6 +7,7 @@ import torch
 
 import rlcard as rlcard
 from rlcard.agents import RandomAgent
+from backend.uno_agents import *
 from rlcard.utils import (
     get_device,
     set_seed,
