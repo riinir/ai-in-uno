@@ -3,9 +3,17 @@
 import os
 import argparse
 
+import sys
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.append(str(PROJECT_ROOT))
+#print(f"PROJECT ROOT: {PROJECT_ROOT}, SYS.PATH: {sys.path}")
+
 import torch
 
 import rlcard as rlcard
+import backend as backend
 from rlcard.agents import RandomAgent
 from backend.uno_agents import *
 from rlcard.utils import (
@@ -32,6 +40,7 @@ def train(args):
             'seed': args.seed,
         }
     )
+    print(f"ENV: {env}")
 
     # Initialize the agent
     if args.algorithm == 'dqn':
@@ -65,7 +74,7 @@ def train(args):
     agents = [agent]
 
     # Set opponent agent
-    heuristic_agent = AggressiveAgent()
+    heuristic_agent = backend.uno_agents.RandomAgent()
     heuristic_name = heuristic_agent.name.split(" ")[0].lower()
     for _ in range(1, env.num_players):
         agents.append(heuristic_agent)
@@ -152,12 +161,12 @@ if __name__ == '__main__':
     parser.add_argument(
         '--num_episodes',
         type=int,
-        default=1,
+        default=5000,
     )
     parser.add_argument(
         '--num_eval_games',
         type=int,
-        default=1,
+        default=100,
     )
     parser.add_argument(
         '--evaluate_every',
@@ -179,7 +188,7 @@ if __name__ == '__main__':
     parser.add_argument(
         "--save_every",
         type=int,
-        default=-1)
+        default=1000)
 
     args = parser.parse_args()
 
