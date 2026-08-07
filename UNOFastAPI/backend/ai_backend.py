@@ -26,22 +26,20 @@ AGENT_REGISTRY = {
 def load_ai_agent(agent_type="dqn"):
     try:
         if agent_type == "dqn":
-            # Get the absolute path to /model.pth
+            # Get the absolute path to dqn agent. Change path name at the end for different dqn agents
             model_path = Path(__file__).resolve().parent / "uno_agents" / "model.pth"
-            # Check if the file exists
-            # if os.path.exists(model_path):
-            #    print("The file exists.")
-            # else:
-            #    print("The file does not exist.")
-            agent = load_model(model_path, env, device=get_device())
+            agent = load_model(model_path, env)
+
         elif agent_type == "rlcard_rule":
             agent = rlcard_models.load("uno-rule-v1").agents[0]
+
         # Custom (non-rlcard) agent types
         elif agent_type in AGENT_REGISTRY:
             agent = AGENT_REGISTRY[agent_type]()
 
         print(f"{agent_type} agent loaded successfully.")
         return agent
+
     except Exception as e:
         print(f"Error loading {agent_type} agent: {e}")
         return None

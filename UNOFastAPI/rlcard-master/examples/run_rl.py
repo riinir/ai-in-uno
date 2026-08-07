@@ -33,7 +33,7 @@ def train(args):
         }
     )
 
-    # Initialize the agent and use random agents as opponents
+    # Initialize the agent
     if args.algorithm == 'dqn':
         from rlcard.agents import DQNAgent
         if args.load_checkpoint_path != "":
@@ -63,8 +63,14 @@ def train(args):
                 save_every=args.save_every
             )
     agents = [agent]
+
+    # Set opponent agent
+    heuristic_agent = AggressiveAgent()
+    heuristic_name = heuristic_agent.name.split(" ")[0].lower()
     for _ in range(1, env.num_players):
-        agents.append(RandomAgent(num_actions=env.num_actions)) # <- SET AGENT HERE
+        agents.append(heuristic_agent)
+
+    print(f"AGENTS: {agents}")
     env.set_agents(agents)
 
     # Start training
@@ -102,7 +108,7 @@ def train(args):
     #plot_curve(csv_path, fig_path, args.algorithm)
 
     # Save model
-    save_path = os.path.join(args.log_dir, 'model_1.pth')
+    save_path = os.path.join(args.log_dir, f'{args.algorithm}_{heuristic_name}_ep{args.num_episodes}_ev{args.num_eval_games}.pth')
     torch.save(agent, save_path)
     print('Model saved in', save_path)
 
