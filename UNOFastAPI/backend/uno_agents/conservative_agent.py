@@ -34,7 +34,6 @@ class ConservativeAgent(BaseUNOAgent):
 
     def step(self, state):
         legal_actions = self.legal_actions(state)
-        print(f"ALL LEGAL ACTIONS: {legal_actions}")
         hand = self.hand(state)
 
         if "draw" in legal_actions:
@@ -42,11 +41,9 @@ class ConservativeAgent(BaseUNOAgent):
 
         # All opponents' hand sizes
         num_cards = self.opponent_card_counts(state)
-        print(f"NUM CARDS: {num_cards}")
 
         # Smallest opponent hand (excluding ourselves)
         opponent_min = min(num_cards)
-        print(f"OPPONENT MIN: {opponent_min}")
 
         # Switch strategy if an opponent is close to winning
         if opponent_min <= 3:
