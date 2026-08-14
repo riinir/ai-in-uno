@@ -44,10 +44,10 @@ class UnoDealer:
             num (int): The number of cards to be dealed
         '''
         self.cardDrawn = []
-        print('Dealing {} cards... to {}'.format(num, player))
+        #print('Dealing {} cards... to {}'.format(num, player))
         for _ in range(num):
             card = self.deck.pop()
-            print('Dealing {} card...'.format(card))
+            #print('Dealing {} card...'.format(card))
             self.cardDrawn.append(card)
             player.hand.append(card)
 

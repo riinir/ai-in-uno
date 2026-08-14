@@ -52,9 +52,8 @@ class Logger(object):
         self.moving_avg_window.append(reward)
         if len(self.moving_avg_window) > Logger.MAX_WINDOW_SIZE:
             self.moving_avg_window.pop(0)
-            moving_avg = sum(self.moving_avg_window) / Logger.MAX_WINDOW_SIZE
-        else:
-            moving_avg = sum(self.moving_avg_window) / len(self.moving_avg_window)
+            
+        moving_avg = sum(self.moving_avg_window) / len(self.moving_avg_window)
 
         self.writer.writerow({
             'episode': episode,
@@ -62,6 +61,8 @@ class Logger(object):
             'moving_avg': moving_avg,
             'cumulative': self.cumulative_reward
         })
+        self.csv_file.flush()
+
         print('')
         self.log('----------------------------------------')
         self.log('  episode      |  ' + str(episode))

@@ -229,6 +229,6 @@ class UnoRound:
                 #return None
             self.dealer.deal_cards(players[(current + direction) % num_players], 4)
             current = (current + direction) % num_players
-        print(f"fudge {current}, {num_players}, {self.direction}")
+        #print(f"fudge {current}, {num_players}, {self.direction}")
         self.current_player = (current + self.direction) % num_players
         self.target = card
