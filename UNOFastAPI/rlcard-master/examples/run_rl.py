@@ -5,17 +5,14 @@ import argparse
 import sys
 from pathlib import Path
 
-# Make sure local project packages are imported first
+# Make UNOFastApi the first path directory
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 #print(f"PROJECT ROOT: {PROJECT_ROOT}, SYS.PATH: {sys.path}")
 
 import torch
-
 import rlcard
-import backend
 
-from rlcard.agents import RandomAgent
 from backend.uno_agents import *
 from rlcard.utils import (
     get_device,
@@ -26,14 +23,11 @@ from rlcard.utils import (
     plot_curve,
 )
 
-print("RLCard imported from:", rlcard.__file__)
-print("Logger imported from:", Logger.__module__)
-print("Logger source file:", Logger.__init__.__code__.co_filename)
-
 def train(args):
 
     # Check whether gpu is available
-    device = get_device()
+    #device = get_device()
+    device = torch.device("cpu")
         
     # Seed numpy, torch, random
     set_seed(args.seed)
