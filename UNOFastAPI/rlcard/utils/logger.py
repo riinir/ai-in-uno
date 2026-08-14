@@ -4,7 +4,7 @@ import csv
 class Logger(object):
     ''' Logger saves the running results and helps make plots from the results
     '''
-    MAX_WINDOW_SIZE = 100
+    MAX_WINDOW_SIZE = 10
 
     def __init__(self, log_dir):
         ''' Initialize the labels, legend and paths of the plot and log file.
@@ -47,13 +47,13 @@ class Logger(object):
             episode (int): the episode of the current point
             reward (float): the reward of the current point
         '''
-        self.cumulative_reward += reward
+        self.cumulative_reward = round(self.cumulative_reward + reward, 2)
 
         self.moving_avg_window.append(reward)
         if len(self.moving_avg_window) > Logger.MAX_WINDOW_SIZE:
             self.moving_avg_window.pop(0)
             
-        moving_avg = sum(self.moving_avg_window) / len(self.moving_avg_window)
+        moving_avg = round(sum(self.moving_avg_window) / len(self.moving_avg_window), 2)
 
         self.writer.writerow({
             'episode': episode,
