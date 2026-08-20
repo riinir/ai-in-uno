@@ -13,6 +13,9 @@ sys.path.insert(0, str(PROJECT_ROOT))
 import torch
 import rlcard
 
+import time
+from math import floor
+
 from backend.uno_agents import *
 from rlcard.utils import (
     get_device,
@@ -25,9 +28,11 @@ from rlcard.utils import (
 
 def train(args):
 
+    start = time.time()
+
     # Check whether gpu is available
     #device = get_device()
-    device = torch.device("cpu")
+    device = torch.device("cpu") # cpu option is faster for MacBook air
         
     # Seed numpy, torch, random
     set_seed(args.seed)
@@ -41,7 +46,7 @@ def train(args):
     )
 
     # Initialize the agent
-    layers = [64, 64]
+    layers = [256, 256]
     if args.algorithm == 'dqn':
         from rlcard.agents import DQNAgent
         if args.load_checkpoint_path != "":
@@ -73,7 +78,7 @@ def train(args):
     agents = [agent]
 
     # Set opponent agent
-    opponent_agent = BalancedAgent()
+    opponent_agent = RandomAgent()
     for _ in range(1, env.num_players):
         agents.append(opponent_agent)
 
@@ -136,6 +141,13 @@ def train(args):
     save_path = os.path.join(args.log_dir, f'{args.algorithm}_model.pth')
     torch.save(agent, save_path)
     print('Model saved in', save_path)
+
+    end = time.time()
+    training_time = end - start
+    seconds = round(training_time % 60)
+    minutes = floor(training_time / 60)
+    print(f'Training time: {minutes} min {seconds} seconds')
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser("DQN/NFSP example in RLCard")
