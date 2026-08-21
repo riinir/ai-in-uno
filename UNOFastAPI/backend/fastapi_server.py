@@ -7,7 +7,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.append(str(PROJECT_ROOT))
 
 from fastapi import FastAPI
-from AIBackend import *
+from ai_backend import *
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -16,7 +16,7 @@ app = FastAPI()
 def start_game():
     initialize_game()
     # Load AI agent and set up agents in the environment
-    ai_agent = load_ai_agent("rlcard_rule")
+    ai_agent = load_ai_agent("balanced")
     set_agents(ai_agent)
 
 @app.get("/draw_card")

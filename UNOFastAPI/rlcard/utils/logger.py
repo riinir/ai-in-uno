@@ -4,6 +4,7 @@ import csv
 class Logger(object):
     ''' Logger saves the running results and helps make plots from the results
     '''
+    MAX_WINDOW_SIZE = 10
 
     def __init__(self, log_dir):
         ''' Initialize the labels, legend and paths of the plot and log file.
@@ -12,6 +13,8 @@ class Logger(object):
             log_path (str): The path the log files
         '''
         self.log_dir = log_dir
+        self.cumulative_reward = 0
+        self.moving_avg_window = []
 
     def __enter__(self):
         self.txt_path = os.path.join(self.log_dir, 'log.txt')
@@ -23,7 +26,7 @@ class Logger(object):
 
         self.txt_file = open(self.txt_path, 'w')
         self.csv_file = open(self.csv_path, 'w')
-        fieldnames = ['episode', 'reward']
+        fieldnames = ['episode', 'reward', 'cumulative', 'moving_avg']
         self.writer = csv.DictWriter(self.csv_file, fieldnames=fieldnames)
         self.writer.writeheader()
 
@@ -44,11 +47,28 @@ class Logger(object):
             episode (int): the episode of the current point
             reward (float): the reward of the current point
         '''
-        self.writer.writerow({'episode': episode, 'reward': reward})
+        self.cumulative_reward = round(self.cumulative_reward + reward, 2)
+
+        self.moving_avg_window.append(reward)
+        if len(self.moving_avg_window) > Logger.MAX_WINDOW_SIZE:
+            self.moving_avg_window.pop(0)
+            
+        moving_avg = round(sum(self.moving_avg_window) / len(self.moving_avg_window), 2)
+
+        self.writer.writerow({
+            'episode': episode,
+            'reward': reward,
+            'moving_avg': moving_avg,
+            'cumulative': self.cumulative_reward
+        })
+        self.csv_file.flush()
+
         print('')
         self.log('----------------------------------------')
         self.log('  episode      |  ' + str(episode))
         self.log('  reward       |  ' + str(reward))
+        self.log('  moving_avg   |  ' + str(moving_avg))
+        self.log('  cumulative   |  ' + str(self.cumulative_reward))
         self.log('----------------------------------------')
 
     def __exit__(self, type, value, traceback):

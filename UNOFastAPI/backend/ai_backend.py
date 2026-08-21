@@ -3,10 +3,11 @@ from rlcard.agents.human_agents.uno_human_agent import HumanAgent
 import os
 from pathlib import Path
 
+import rlcard as rlcard
 from rlcard.agents import DQNAgent
 from rlcard.utils import get_device
-import rlcard as rlcard
 from rlcard import models as rlcard_models
+from uno_agents import *
 import numpy
 
 # Create rlcard UNO environment
@@ -15,28 +16,35 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 global player_id, stt, trajectories, human_agent, ai_played_draw
 
+AGENT_REGISTRY = {
+    "random": RandomAgent,
+    "aggressive": AggressiveAgent,
+    "conservative": ConservativeAgent,
+    "balanced": BalancedAgent,
+}
 
 def load_ai_agent(agent_type="dqn"):
     try:
         if agent_type == "dqn":
-            # Get the absolute path to /model.pth
-            model_path = Path(__file__).resolve().parent / "model.pth"
-            # Check if the file exists
-            # if os.path.exists(model_path):
-            #    print("The file exists.")
-            # else:
-            #    print("The file does not exist.")
-            agent = load_model(model_path, env, device=get_device())
+            # Get the absolute path to dqn agent. Change path name at the end for different dqn agents
+            model_path = Path(__file__).resolve().parent / "uno_agents" / "model.pth"
+            agent = load_model(model_path, env)
+
         elif agent_type == "rlcard_rule":
             agent = rlcard_models.load("uno-rule-v1").agents[0]
 
-        print("AI agent loaded successfully.")
+        # Custom (non-rlcard) agent types
+        elif agent_type in AGENT_REGISTRY:
+            agent = AGENT_REGISTRY[agent_type]()
+
+        print(f"{agent_type} agent loaded successfully.")
         return agent
+
     except Exception as e:
-        print(f"Error loading AI agent: {e}")
+        print(f"Error loading {agent_type} agent: {e}")
         return None
 
-def load_model(model_path, env=None, position=None, device=None):
+def load_model(model_path, device=None):
     print("hi")
     if os.path.isfile(model_path):
         print("Loading model from {}".format(model_path))
@@ -163,10 +171,13 @@ def run(action):
 
 def suggestion():
     ai_suggestion = env.agents[1].step(env.get_state(0))
-    # UnoEnv.decode_action_api(ai_suggestion)
 
-    suggested_action = env.decode_action_api(ai_suggestion)
-    return suggested_action
+    # Some agents use the raw action string (e.g., "r-7"), so we can return that immediately
+    if env.agents[1].use_raw:
+        return ai_suggestion
+
+    # Else decode it first from integer to action string then return
+    return env.decode_action_api(ai_suggestion)
 
 def draw_card_backend():
     return env.returDrawnCardsFromEnv()
