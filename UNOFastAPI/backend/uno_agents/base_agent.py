@@ -78,7 +78,9 @@ class BaseUNOAgent(ABC):
     @staticmethod
     def opponent_card_counts(state):
         # Return list of opponent hand sizes
-        return state["raw_obs"]["num_cards"]
+        num_cards = state["raw_obs"]["num_cards"]
+        current = state["raw_obs"]["current_player"]
+        return [c for i, c in enumerate(num_cards) if i != current]
 
     @staticmethod
     def current_player(state):
@@ -128,7 +130,7 @@ class BaseUNOAgent(ABC):
         if not counts:
             return "r"
 
-        return max(counts)
+        return max(counts, key=counts.get)
 
     @staticmethod
     def least_common_colour(cards):
@@ -138,7 +140,7 @@ class BaseUNOAgent(ABC):
         if not counts:
             return "r"
 
-        return min(counts)
+        return min(counts, key=counts.get)
 
     @staticmethod
     def action_type(action):
