@@ -28,7 +28,7 @@ def load_ai_agent(agent_type="dqn"):
         if agent_type == "dqn":
             # Get the absolute path to dqn agent. Change path name at the end for different dqn agents
             model_path = Path(__file__).resolve().parent / "uno_agents" / "model.pth"
-            agent = load_model(model_path, env)
+            agent = load_model(model_path)
 
         elif agent_type == "rlcard_rule":
             agent = rlcard_models.load("uno-rule-v1").agents[0]
@@ -45,7 +45,6 @@ def load_ai_agent(agent_type="dqn"):
         return None
 
 def load_model(model_path, device=None):
-    print("hi")
     if os.path.isfile(model_path):
         print("Loading model from {}".format(model_path))
         # Torch model
