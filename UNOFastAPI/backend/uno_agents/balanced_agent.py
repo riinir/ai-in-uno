@@ -1,28 +1,24 @@
 """
 Balanced Agent heuristics (highest priority to lowest):
 
-1. Threat prevention
+1. Threat priority
     - if any opponent has 2 or fewer cards remaining,
-      immediately prioritize attack cards: wild_draw_4 > draw_2 > skip > reverse
+      immediately prioritize special cards, i.e., wild_draw_4 > draw_2 > skip > reverse
 
-2. Colour consolidation
+2. Eliminate least colours
    - prefer playing cards from colours that appear LEAST often in our hand
 
-3. Special card usage
+3. Regular priority
    - when there is no immediate threat, prefer special cards (draw_2, skip, reverse) over number cards
 
-4. Number card usage
+4. Number card priority
    - if multiple number cards are available, prefer higher-valued cards first
 
-5. Wild card preservation
-   - save 'wild' and 'wild draw four' cards
-   - their flexibility is helpful in difficult situations
+5. Wild card
+   - save 'wild' and 'wild draw four' cards because their flexibility is helpful in difficult situations
 
 6. Wild colour selection
-   - when playing a 'wild' or 'wild draw four', choose the colour that appears most often in our hand
-
-7. Draw Only When Necessary
-   - if no playable card exists, draw.
+   - when playing a 'wild' or 'wild draw four', choose the colour that appears MOST often in our hand
 """
 
 from backend.uno_agents.base_agent import BaseUNOAgent
