@@ -30,6 +30,11 @@ def load_ai_agent(agent_type="dqn"):
             model_path = Path(__file__).resolve().parent / "uno_agents" / "model.pth"
             agent = load_model(model_path)
 
+        # DQN model trained against new RandomAgent
+        elif agent_type == "dqn-123":
+            model_path = Path(__file__).resolve().parent / "uno_agents" / "dqn_model.pth"
+            agent = load_model(model_path)
+
         elif agent_type == "rlcard_rule":
             agent = rlcard_models.load("uno-rule-v1").agents[0]
 
